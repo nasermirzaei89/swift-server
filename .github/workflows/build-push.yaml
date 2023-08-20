@@ -1,0 +1,36 @@
+name: Build and Push to GHCR
+
+on:
+  push:
+    branches:
+      - master  # Change this to the branch you want to trigger the workflow 
+on
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Swift
+      uses: swift-actions/setup-swift@v2
+      with:
+        swift-version: 5.5
+
+    - name: Build and Test
+      run: |
+        swift build --configuration release
+        swift test --enable-code-coverage
+
+    - name: Build Docker image
+      run: |
+        docker build -t ghcr.io/nasermirzaei89/swift-server .
+
+    - name: Log in to GHCR
+      run: echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+    - name: Push Docker image to GHCR
+      run: docker push ghcr.io/nasermirzaei89/swift-server
+
