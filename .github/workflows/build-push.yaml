@@ -3,8 +3,7 @@ name: Build and Push to GHCR
 on:
   push:
     branches:
-      - master  # Change this to the branch you want to trigger the workflow 
-on
+      - master
 
 jobs:
   build:
